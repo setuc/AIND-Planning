@@ -23,18 +23,17 @@ class TestAirCargoProb1(unittest.TestCase):
         self.assertEqual(len(self.p1.goal),2)
 
 
-# class TestAirCargoProb2(unittest.TestCase):
-#
-#     def setUp(self):
-#         self.p2 = air_cargo_p2()
-#
-#     def test_ACP2_num_fluents(self):
-#         self.assertEqual(len(self.p2.initial), 27)
-#
-#     def test_ACP2_num_requirements(self):
-#         self.assertEqual(len(self.p2.goal),3)
-#
-#
+class TestAirCargoProb2(unittest.TestCase):
+    def setUp(self):
+        self.p2 = air_cargo_p2()
+
+    def test_ACP2_num_fluents(self):
+        self.assertEqual(len(self.p2.initial), 27)
+
+    def test_ACP2_num_requirements(self):
+        self.assertEqual(len(self.p2.goal), 3)
+
+
 # class TestAirCargoProb3(unittest.TestCase):
 #
 #     def setUp(self):
