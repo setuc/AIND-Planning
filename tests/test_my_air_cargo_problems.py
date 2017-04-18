@@ -23,28 +23,28 @@ class TestAirCargoProb1(unittest.TestCase):
         self.assertEqual(len(self.p1.goal),2)
 
 
-class TestAirCargoProb2(unittest.TestCase):
-
-    def setUp(self):
-        self.p2 = air_cargo_p2()
-
-    def test_ACP2_num_fluents(self):
-        self.assertEqual(len(self.p2.initial), 27)
-
-    def test_ACP2_num_requirements(self):
-        self.assertEqual(len(self.p2.goal),3)
-
-
-class TestAirCargoProb3(unittest.TestCase):
-
-    def setUp(self):
-        self.p3 = air_cargo_p3()
-
-    def test_ACP3_num_fluents(self):
-        self.assertEqual(len(self.p3.initial), 32)
-
-    def test_ACP3_num_requirements(self):
-        self.assertEqual(len(self.p3.goal),4)
+# class TestAirCargoProb2(unittest.TestCase):
+#
+#     def setUp(self):
+#         self.p2 = air_cargo_p2()
+#
+#     def test_ACP2_num_fluents(self):
+#         self.assertEqual(len(self.p2.initial), 27)
+#
+#     def test_ACP2_num_requirements(self):
+#         self.assertEqual(len(self.p2.goal),3)
+#
+#
+# class TestAirCargoProb3(unittest.TestCase):
+#
+#     def setUp(self):
+#         self.p3 = air_cargo_p3()
+#
+#     def test_ACP3_num_fluents(self):
+#         self.assertEqual(len(self.p3.initial), 32)
+#
+#     def test_ACP3_num_requirements(self):
+#         self.assertEqual(len(self.p3.goal),4)
 
 
 class TestAirCargoMethods(unittest.TestCase):
@@ -59,20 +59,21 @@ class TestAirCargoMethods(unittest.TestCase):
 
     def test_AC_get_actions(self):
         # to see a list of the actions, uncomment below
-        # print("\nactions for problem")
-        # for action in self.p1.actions_list:
-        #     print("{}{}".format(action.name, action.args))
+        print("\nactions for problem")
+        for action in self.p1.actions_list:
+            print("{}{}".format(action.name, action.args))
         self.assertEqual(len(self.p1.actions_list), 20)
 
     def test_AC_actions(self):
         # to see list of possible actions, uncomment below
-        # print("\npossible actions:")
-        # for action in self.p1.actions(self.p1.initial):
-        #     print("{}{}".format(action.name, action.args))
+        print("\npossible actions:")
+        for action in self.p1.actions(self.p1.initial):
+            print("{}{}".format(action.name, action.args))
         self.assertEqual(len(self.p1.actions(self.p1.initial)), 4)
 
     def test_AC_result(self):
         fs = decode_state(self.p1.result(self.p1.initial, self.act1), self.p1.state_map)
+        print(fs)
         self.assertTrue(expr('In(C1, P1)') in fs.pos)
         self.assertTrue(expr('At(C1, SFO)') in fs.neg)
 

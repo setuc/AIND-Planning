@@ -46,7 +46,7 @@ class AirCargoProblem(Problem):
             list of Action objects
         '''
 
-        # TODO create concrete Action objects based on the domain action schema for: Load, Unload, and Fly
+        # DONE create concrete Action objects based on the domain action schema for: Load, Unload, and Fly
         # concrete actions definition: specific literal action that does not include variables as with the schema
         # for example, the action schema 'Load(c, p, a)' can represent the concrete actions 'Load(C1, P1, SFO)'
         # or 'Load(C2, P2, JFK)'.  The actions for the planning problem must be concrete because the problems in
@@ -58,8 +58,7 @@ class AirCargoProblem(Problem):
             :return: list of Action objects
             '''
             loads = []
-            # TODO create all load ground actions from the domain Load action
-            ''' Used the same variable names from fly_actions
+            # Used the same variable names from fly_actions
             # Positive Preconditions: Cargo C1 is at Aiport A1; Plane P1 is at Airport  A1
             # No Negative Preconditions
             # Effect: Cargo C1 added in Plane P1
@@ -68,13 +67,13 @@ class AirCargoProblem(Problem):
             for airport in self.airports:
                 for plane in self.planes:
                     for cargo in self.cargos:
-                        precond_pos = [expr("At({}, {}".format(cargo, airport)),
-                                       expr("At({}, {}".format(plane, airport))
+                        precond_pos = [expr("At({}, {})".format(cargo, airport)),
+                                       expr("At({}, {})".format(plane, airport))
                                        ]
-                        precond_neg = []
-                        effect_add = [expr("In({}, {}".format(cargo, plane))]
-                        effect_rem = [expr("At({}, {}".format(cargo, airport))]
-                        load = Action(expr("Load({}, {}".format(cargo, plane, airport)),
+                        precond_neg = [expr("At({}, {})".format(cargo, plane))]
+                        effect_add = [expr("In({}, {})".format(cargo, plane))]
+                        effect_rem = [expr("At({}, {})".format(cargo, airport))]
+                        load = Action(expr("Load({}, {}, {})".format(cargo, plane, airport)),
                                       [precond_pos, precond_neg],
                                       [effect_add, effect_rem]
                                       )
@@ -88,19 +87,19 @@ class AirCargoProblem(Problem):
             :return: list of Action objects
             '''
             unloads = []
-            # TODO create all Unload ground actions from the domain Unload action
+
             # Similar to load action, but opposite.
             #
             for airport in self.airports:
                 for plane in self.planes:
                     for cargo in self.cargos:
-                        precond_pos = [expr("In({}, {}".format(cargo, plane)),
-                                       expr("At({}, {}".format(plane, airport))
+                        precond_pos = [expr("In({}, {})".format(cargo, plane)),
+                                       expr("At({}, {})".format(plane, airport))
                                        ]
                         precond_neg = []
-                        effect_add = [expr("At({}, {}".format(cargo, airport))]
-                        effect_rem = [expr("At({}, {}".format(cargo, plane))]
-                        unload = Action(expr("Unload({}, {}".format(cargo, plane, airport)),
+                        effect_add = [expr("At({}, {})".format(cargo, airport))]
+                        effect_rem = [expr("In({}, {})".format(cargo, plane))]
+                        unload = Action(expr("Unload({}, {}, {})".format(cargo, plane, airport)),
                                         [precond_pos, precond_neg],
                                         [effect_add, effect_rem]
                                         )
@@ -139,8 +138,9 @@ class AirCargoProblem(Problem):
             e.g. 'FTTTFF'
         :return: list of Action objects
         """
-        # TODO implement
-        possible_actions = []
+        kb = PropKB()
+        kb.tell(decode_state(state, self.state_map).pos_sentence())
+        possible_actions = [act for act in self.actions_list if act.check_precond(kb, act.args)]
         return possible_actions
 
     def result(self, state: str, action: Action):
@@ -152,8 +152,11 @@ class AirCargoProblem(Problem):
         :param action: Action applied
         :return: resulting state after action
         """
-        # TODO implement
-        new_state = FluentState([], [])
+        kb = PropKB()
+        kb.tell(decode_state(state, self.state_map).pos_sentence())
+        action.act(kb, action.args)
+        new_state = FluentState(kb.clauses, [])
+
         return encode_state(new_state, self.state_map)
 
     def goal_test(self, state: str) -> bool:
@@ -195,6 +198,10 @@ class AirCargoProblem(Problem):
         '''
         # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
         count = 0
+        for idx, state in enumerate(node.state):
+            if node.state[idx] is 'F' and self.state_map[idx] in self.goal:
+                count += 1
+
         return count
 
 
